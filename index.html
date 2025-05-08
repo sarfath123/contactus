@@ -306,28 +306,31 @@
             <div class="contact-content">
                 <div class="contact-form">
                     <h3>Send us a message</h3>
-                        <form id="contactForm" action="https://formsubmit.co/sarfath691@gmail.com" method="POST">
-                            <input type="hidden" name="_subject" value="New Contact Form Submission">
-                            <input type="hidden" name="_captcha" value="false">
-                            <input type="hidden" name="_next" value="https://sarfath123.github.io/contactus/">
+                    <form id="contactForm" action="https://formsubmit.co/sarfath691@gmail.com" method="POST">
+                        <input type="hidden" name="_subject" value="New Contact Form Submission">
+                        <input type="hidden" name="_captcha" value="false">
+                        <input type="hidden" name="_next" value="https://sarfath123.github.io/contactus/thank-you.html">
+                        <!-- Honeypot field to prevent spam -->
+                        <input type="text" name="_honey" style="display:none">
+                        
                         <div class="form-group">
                             <label for="name">Your Name</label>
-                            <input type="text" id="name" class="form-control" required>
+                            <input type="text" name="name" id="name" class="form-control" required>
                             <div class="error-message" id="nameError">Please enter your name</div>
                         </div>
                         <div class="form-group">
                             <label for="email">Email Address</label>
-                            <input type="email" id="email" class="form-control" required>
+                            <input type="email" name="email" id="email" class="form-control" required>
                             <div class="error-message" id="emailError">Please enter a valid email address</div>
                         </div>
                         <div class="form-group">
                             <label for="subject">Subject</label>
-                            <input type="text" id="subject" class="form-control" required>
+                            <input type="text" name="subject" id="subject" class="form-control" required>
                             <div class="error-message" id="subjectError">Please enter a subject</div>
                         </div>
                         <div class="form-group">
                             <label for="message">Message</label>
-                            <textarea id="message" class="form-control" required></textarea>
+                            <textarea name="message" id="message" class="form-control" required></textarea>
                             <div class="error-message" id="messageError">Please enter your message</div>
                         </div>
                         <button type="submit" class="btn">Send Message</button>
@@ -391,7 +394,7 @@
             navLinks.classList.toggle('show');
         });
 
-        // Form validation
+        // Form validation - but allow the form to submit if valid
         const contactForm = document.getElementById('contactForm');
         const nameInput = document.getElementById('name');
         const emailInput = document.getElementById('email');
@@ -402,10 +405,10 @@
         const subjectError = document.getElementById('subjectError');
         const messageError = document.getElementById('messageError');
 
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
+        // Check if all fields are valid right now
+        function validateForm() {
             let isValid = true;
-
+            
             // Validate name
             if (nameInput.value.trim() === '') {
                 nameError.style.display = 'block';
@@ -439,10 +442,42 @@
                 messageError.style.display = 'none';
             }
 
-            if (isValid) {
-                // In a real application, you would submit the form data to a server here
-                alert('Form submitted successfully! We will get back to you soon.');
-                contactForm.reset();
+            return isValid;
+        }
+
+        contactForm.addEventListener('submit', function(e) {
+            if (!validateForm()) {
+                e.preventDefault();
+                console.log("Form validation failed");
+            } else {
+                console.log("Form is valid, submitting to FormSubmit");
+                // Form will submit normally to FormSubmit
+            }
+        });
+
+        // Real-time validation as user types
+        nameInput.addEventListener('input', function() {
+            if (nameInput.value.trim() !== '') {
+                nameError.style.display = 'none';
+            }
+        });
+
+        emailInput.addEventListener('input', function() {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (emailRegex.test(emailInput.value)) {
+                emailError.style.display = 'none';
+            }
+        });
+
+        subjectInput.addEventListener('input', function() {
+            if (subjectInput.value.trim() !== '') {
+                subjectError.style.display = 'none';
+            }
+        });
+
+        messageInput.addEventListener('input', function() {
+            if (messageInput.value.trim() !== '') {
+                messageError.style.display = 'none';
             }
         });
     </script>
